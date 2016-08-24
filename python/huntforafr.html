@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>FRS Radio Project</title>
+    <script src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/loader.js"></script>
+    <script>
+        function loadtemp(){
+            $.get('http://localhost:8000/data', function(data) {
+              text = data.split(",");
+              zero = text[1];
+              one = text[3];
+              two = text[6];
+              three = text[7];
+              four = text[8];
+              five = text[9];
+              six = text[10];
+              seven = text[11];
+            }, "text");
+        };
+        function loadpage(x){
+            window.location.href = x;
+        };
+        $(document).ready(function(){
+            zero =  0;
+            one = 0;
+            two = 0;
+            three = 0;
+            four = 0;
+            five = 0;
+            six = 0;
+            seven = 0;
+            loadtemp();
+            setInterval(function(){
+                loadtemp() 
+            }, 50);
+        });
+    </script>
+</head>
+
+<body>
+  <table style="width: 650px; hseven:450px; border: 1px solid black;" align="center">
+  <tr>
+    <td>
+      
+      <div id="zeroChart"></div>
+    </td>
+    <td>
+      <div id="oneChart"></div>
+    </td>
+    <td>
+      <div id="twoChart"></div>
+    </td>
+    <td>
+      <div id="threeChart"></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div id="fourChart"></div>
+    </td>
+    <td>
+      <div id="fiveChart"></div>
+    </td>
+    <td>
+      <div id="sixChart"></div>
+    </td>
+    <td>
+      <div id="sevenChart"></div>
+    </td>
+  </tr>
+</table>
+
+  
+
+
+
+
+<script type='text/javascript'>//<![CDATA[
+
+      google.charts.load('current', {
+        'packages': ['gauge']
+      });
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var zeroData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['zero', 0]
+        ]);
+
+        var oneData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['one', 0]
+        ]);
+
+        var twoData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['two', 0]
+        ]);
+
+        var threeData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['three', 0.0]
+        ]);
+
+        var fourData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['four', 0]
+        ]);
+
+        var fiveData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['five', 0]
+        ]);
+        
+        var sixData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['six', 0]
+        ]);
+        
+        var sevenData = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['seven', 0]
+        ]);
+
+        var zeroOptions = {
+          width: 150,
+          min: 350,
+          max: 2500,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        var oneOptions = {
+          width: 150,
+          min: 0,
+          max: 255,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        var twoOptions = {
+          width: 150,
+          min: 0,
+          max: 255,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        var threeOptions = {
+          width: 150,
+          min: 0,
+          max: 1000,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        
+
+        var fourOptions = {
+          width: 150,
+          min: 0,
+          max: 7000,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        var fiveOptions = {
+          width: 150,
+          min: 9800,
+          max: 12000,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+        
+        var sixOptions = {
+          width: 150,
+          min: 0,
+          max: 255,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+        
+        var sevenOptions = {
+          width: 150,
+          min: 0,
+          max: 20,
+          animation: {
+            duration: 250,
+            easing: 'out',
+          }
+        };
+
+        var zeroChart = new google.visualization.Gauge(document.getElementById('zeroChart'));
+
+        zeroChart.draw(zeroData, zeroOptions);
+
+        setInterval(function() {
+          zeroData.setValue(0, 1, zero);
+          zeroChart.draw(zeroData, zeroOptions);
+        }, 150);
+
+        var oneChart = new google.visualization.Gauge(document.getElementById('oneChart'));
+
+        oneChart.draw(oneData, oneOptions);
+
+        setInterval(function() {
+          oneData.setValue(0, 1, one);
+          oneChart.draw(oneData, oneOptions);
+        }, 150);
+
+        var threeChart = new google.visualization.Gauge(document.getElementById('threeChart'));
+
+        threeChart.draw(threeData, threeOptions);
+
+        setInterval(function() {
+          threeData.setValue(0, 1, three);
+          threeChart.draw(threeData, threeOptions);
+        }, 150);
+
+        var twoChart = new google.visualization.Gauge(document.getElementById('twoChart'));
+
+        twoChart.draw(twoData, twoOptions);
+
+        setInterval(function() {
+          twoData.setValue(0, 1, two);
+          twoChart.draw(twoData, twoOptions);
+        }, 150);
+
+        var fourChart = new google.visualization.Gauge(document.getElementById('fourChart'));
+
+        fourChart.draw(fourData, fourOptions);
+
+        setInterval(function() {
+          fourData.setValue(0, 1, four);
+          fourChart.draw(fourData, fourOptions);
+        }, 150);
+
+        var fiveChart = new google.visualization.Gauge(document.getElementById('fiveChart'));
+
+        fiveChart.draw(fiveData, fiveOptions);
+
+        setInterval(function() {
+          fiveData.setValue(0, 1, five);
+          fiveChart.draw(fiveData, fiveOptions);
+        }, 150);
+        
+        var sixChart = new google.visualization.Gauge(document.getElementById('sixChart'));
+
+        sixChart.draw(sixData, sixOptions);
+
+        setInterval(function() {
+          sixData.setValue(0, 1, six);
+          sixChart.draw(sixData, sixOptions);
+        }, 150);
+        
+        var sevenChart = new google.visualization.Gauge(document.getElementById('sevenChart'));
+
+        sevenChart.draw(sevenData, sevenOptions);
+
+        setInterval(function() {
+          sevenData.setValue(0, 1, seven);
+          sevenChart.draw(sevenData, sevenOptions);
+        }, 150);
+      }
+
+//]]> 
+
+</script>
+
+</body>
+
+</html>
+
