@@ -1,0 +1,79 @@
+body {
+  background-color: black;
+}
+
+canvas {
+    width: 230px;
+}
+
+#spacer {
+    height: 110px;
+}
+
+#lblzero {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 183px;
+  left: 10px;
+  font-size: 40px;
+  color: white;
+  padding: 0px;
+}
+
+#lblone {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 183px;
+  left: 245px;
+  font-size: 40px;
+  color: white;
+}
+
+#lbltwo {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 183px;
+  left: 480px;
+  font-size: 40px;
+  color: white;
+}
+
+#lblthree {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 303px;
+  left: 10px;
+  font-size: 40px;
+  color: white;
+  padding: 0px;
+}
+
+#lblfour {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 303px;
+  left: 245px;
+  font-size: 40px;
+  color: white;
+}
+
+#lblfive {
+  display: inline;
+  position: absolute;
+  text-align: center;
+  width: 230px;
+  top: 303px;
+  left: 480px;
+  font-size: 40px;
+  color: white;
+}
