@@ -54,27 +54,29 @@ window.onload=function(){
   $('#splashscreen').fadeOut(2000).promise().done(function() {
     $('#content').hide();
     $('#content').fadeIn(2000);
+    $('.labels').fadeIn(2000);
+    $('.values').fadeIn(2000);
 
     skip = 0;
     threads = 0;
     setInterval(function(){
-        if (skip == 0 && threads <= 1)
+        if (skip == 0 && threads <= 16)
         {
             threads++;
             loadtemp();
 
             gauge.set(rpm); // set actual value
-            $('#lblzero').text(rpm);
+            $('#valzero').text(rpm);
             gauge1.set(brake); // set actual value
-            $('#lblone').text(brake);
+            $('#valone').text(brake);
             gauge2.set(clutchStatus); // set actual value
-            $('#lbltwo').text(clutchStatus);
+            $('#valtwo').text(clutchStatus);
             gauge3.set(fuelFlow); // set actual value
-            $('#lblthree').text(fuelFlow);
+            $('#valthree').text(fuelFlow);
             gauge4.set(gear); // set actual value
-            $('#lblfour').text(gear);
+            $('#valfour').text(gear);
             gauge5.set(mph); // set actual value
-            $('#lblfive').text(mph);
+            $('#valfive').text(mph);
         }
         else if (skip > 0)
         {
@@ -154,29 +156,53 @@ gauge5.set(1250); // set actual value
 </head>
 
 <body>
-  <div id="splashscreen">
-      <h2>Loading...</h2>
+  <div id="spacer">FRS Radio Project by:hype-armor - Thread Count:<div id="threads">Starting up....</div></div>
+  <div id="splashscreen" style="height: 480px;">
       <img src="img/frs.png" />
   </div>
+    
+    <table id="content" style="width:100%">
+      <tr>
+        <th>zero</th>
+        <th>one</th>
+        <th>two</th>
+      </tr>
+      <tr>
+        <td>
+          <canvas id="zero" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valzero">1234</div>
+        </td>
+        <td>
+          <canvas id="one" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valone">5678</div>
+        </td>
+        <td>
+          <canvas id="two" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valtwo">9999</div>
+        </td>
+      </tr>
+      <tr>
+        <th>three</th>
+        <th>four</th>
+        <th>five</th>
+      </tr>
+      <tr>
+        <td>
+          <canvas id="three" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valthree"></div>
+        </td>
+        <td>
+          <canvas id="four" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valfour"></div>
+        </td>
+        <td>
+          <canvas id="five" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valfive"></div>
+        </td>
+      </tr>
+    </table>
 
-  <div id="content">
-    <div id="spacer">FRS</div>
-    <canvas id="zero" style="border:1px solid #000000;"></canvas>
-    <div id="lblzero"></div>
-    <canvas id="one" style="border:1px solid #000000;"></canvas>
-    <div id="lblone"></div>
-    <canvas id="two" style="border:1px solid #000000;"></canvas>
-    <div id="lbltwo"></div>
-    <br/>
-    <canvas id="three" style="border:1px solid #000000;"></canvas>
-    <div id="lblthree"></div>
-    <canvas id="four" style="border:1px solid #000000;"></canvas>
-    <div id="lblfour"></div>
-    <canvas id="five" style="border:1px solid #000000;"></canvas>
-    <div id="lblfive"></div>
-
-    <div id="threads">Starting up....</div>
-  </div>
+    
 </body>
 
 </html>
