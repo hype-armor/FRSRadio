@@ -28,7 +28,7 @@ def worker():
         try:
             serialData = ser.readline()
         except:
-            time.sleep(1)
+            time.sleep(0.1)
             port = findArduino()
             if port is not None:
                 try:
@@ -38,11 +38,11 @@ def worker():
                     print ("Connect failed.")
             else:
                 rand = str(random.randrange(-350,2500))
-                serialData = (rand + "," + rand + "," + rand + "," + rand + "," + rand + "," + 
-                rand + "," + rand + "," + rand + "," + rand + "," + rand + "," + rand + "," + 
+                serialData = (str(random.randrange(0,3000)) + "," + str(random.randrange(0,3000)) + "," + str(random.randrange(0,3000)) + "," + str(random.randrange(0,3000)) + "," + str(random.randrange(0,3000)) + "," + 
+                str(random.randrange(0,3000)) + "," + rand + "," + rand + "," + rand + "," + rand + "," + rand + "," + 
                 rand + "," + rand + "," + rand + "," + rand + "," + rand + "," + rand + ",")
         
-        print ("Data=" + serialData)
+        #print ("Data=" + serialData)
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -50,7 +50,10 @@ class S(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
+    
     def do_GET(self):
+        currentpath = os.getcwd()
+        
         if self.path == "/data":
             self._set_headers()
             localData = serialData
@@ -60,11 +63,22 @@ class S(BaseHTTPRequestHandler):
             self._set_headers()
             f = open("index.html", "r")
             self.wfile.write(f.read())
+        elif "/css/" in self.path:
+            self.send_response(200)
+            self.send_header('Content-type', 'text/css')
+            self.end_headers()
+            f = open(currentpath+self.path, "r")
+            self.wfile.write(f.read())
+        elif "/js/" in self.path:
+            self.send_response(200)
+            self.send_header('Content-type', 'application/javascript')
+            self.end_headers()
+            f = open(currentpath+self.path, "r")
+            self.wfile.write(f.read())
         else:
-        #text/css
-            currentpath = os.getcwd()
             #self._set_headers()
             mimetype = mimetypes.guess_type(currentpath+self.path)
+            print (currentpath+self.path)
             self.send_response(200)
             self.send_header('Content-type', mimetype)
             self.end_headers()
