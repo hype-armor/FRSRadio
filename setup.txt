@@ -36,7 +36,8 @@ sudo -H pip install pyserial
 sudo -H pip install simplejson
 apti xorg-x11-xauth
 apti xauth
-
+git clone https://github.com/Seeed-Studio/CAN_BUS_Shield.git
+# then load the libary in arduino software.
 
 sudo cp /etc/network/interfaces /etc/network/interfaces.bk
 sudo vi /etc/network/interfaces
