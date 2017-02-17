@@ -28,7 +28,7 @@ aptg -y
 aptdu -y
 
 # install software
-apti tmux # user "Ctrl+B then d" to detach.
+apti tmux # user "Ctrl+B then d" to detach. "Ctrl+B then s" lists all sessions.
 apti -y tightvncserver
 apti -y xrdp
 apti python-pip
