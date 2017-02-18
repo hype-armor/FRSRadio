@@ -1,0 +1,71 @@
+sudo adduser greg
+
+sudo visudo
+
+exit
+
+# Sign in as greg
+
+echo "#####################" >> .bashrc
+echo "# Personal touches  #" >> .bashrc
+echo "#####################" >> .bashrc
+echo "alias apti='sudo apt-get install'" >> .bashrc
+echo "alias aptu='sudo apt-get update'" >> .bashrc
+echo "alias aptg='sudo apt-get upgrade'" >> .bashrc
+echo "alias apts='apt-cache search'" >> .bashrc
+echo "alias cls='clear'" >> .bashrc
+echo "alias gputemp='sudo /opt/vc/bin/vcgencmd measure_temp'" >> .bashrc
+echo "alias aptdu='sudo apt-get dist-upgrade'" >> .bashrc
+echo "alias frsstop='sudo service frswebserver stop'" >> .bashrc
+echo "alias frsstart='sudo service frswebserver start'" >> .bashrc
+echo "alias frsstatus='sudo service frswebserver status'" >> .bashrc
+exit
+
+
+# Sign in as greg to test aliases
+aptu -y
+aptg -y
+aptdu -y
+
+# install software
+apti tmux # user "Ctrl+B then d" to detach. "Ctrl+B then s" lists all sessions.
+apti -y tightvncserver
+apti -y xrdp
+apti python-pip
+sudo -H pip install pyserial
+sudo -H pip install simplejson
+apti xorg-x11-xauth
+apti xauth
+git clone https://github.com/Seeed-Studio/CAN_BUS_Shield.git
+# then load the libary in arduino software.
+
+sudo cp /etc/network/interfaces /etc/network/interfaces.bk
+sudo vi /etc/network/interfaces
+# scroll down to "iface wlan0 inet manual"
+# change manual to static
+# then add the following lines
+address 192.168.0.60
+netmask 255.255.255.0
+network 192.168.0.0
+broadcast 192.168.0.255
+gateway 192.168.0.1
+
+sudo rm /var/lib/dhcp/*
+
+
+
+### webserver setup
+cp frswebserver.sh to /etc/init.d/frswebserver.sh
+chmod 755 /etc/init.d/frswebserver.sh
+chmod +x frswebserver.sh
+sudo systemctl daemon-reload
+cp webserver.py /home/pi/frsproject/webserver.py
+chmod +x webserver.py
+
+### setup x forwarding.
+sudo vi /etc/ssh/ssh_config
+#   ForwardAgent yes
+#   ForwardX11 yes
+#   ForwardX11Trusted yes
+
+
