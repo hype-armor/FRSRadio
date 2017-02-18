@@ -45,9 +45,9 @@ double clutchStatus = 0.0;
 signed int mph = 0;
 signed int speed0 = 0;
 signed int speed1 = 0;
+unsigned int oiltemp = 0;
+unsigned int coolenttemp = 0;
 
-
-String line = "";
 void loop()
 {
   //CAN.readMsgBuf(&len, rxBuf);
@@ -55,6 +55,8 @@ void loop()
 
   CAN.readMsgBufID(&rxId, &len, rxBuf);
 
+  // This prevents doing calculations every loop. 
+  // We still need to update incoming data because not all data will be captured in a single loop or even 100.
   if (ticks == 1000)
   {
     ticks = 0;
@@ -89,7 +91,7 @@ void loop()
     }
     
     // mph math
-    mph = (speed0 + (speed1 * 256));// * 0.621371192; // m to k
+    mph = (speed0 + (speed1 * 256)) * 0.621371192; // m to k
 
     // fuel flow math
     fuelFlow = fuelFlow0 + (fuelFlow1 * 256);
@@ -107,6 +109,8 @@ void loop()
     Serial.print(pitch);Serial.print(",");
     Serial.print(roll);Serial.print(",");
     Serial.print(sportMode);Serial.print(",");
+    Serial.print(oiltemp);Serial.print(",");
+    Serial.print(coolenttemp);Serial.print(",");
     
     // print unknown data
     for (int i =0; i < size; i++)
@@ -153,7 +157,7 @@ void loop()
     {
       buf[1] = (rxBuf[2] + (rxBuf[3] * 256));
     }
-    buf[1] = rxBuf[3];
+    //buf[1] = rxBuf[3];
   }
   else if (rxId == 209)
   {
@@ -179,6 +183,8 @@ void loop()
   {
     buf[6] = rxBuf[4]; // load
     
+    oiltemp = rxBuf[2];
+    coolenttemp = rxBuf[3];
     fuelFlow0 = rxBuf[0];
     fuelFlow1 = rxBuf[1];
   }
