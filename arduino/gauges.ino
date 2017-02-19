@@ -30,8 +30,8 @@ signed int rpmLSB = 0;
 signed int pitch = 0;
 signed int roll = 0;
 signed int steeringAngle = 0;
-unsigned int steeringAngle0 = 0;
-unsigned int steeringAngle1 = 0;
+signed int steeringAngle0 = 0;
+signed int steeringAngle1 = 0;
 unsigned int accelerator = 0;
 unsigned int brake = 0;
 unsigned int fuelFlow = 0;
@@ -140,7 +140,7 @@ void loop()
     rpmLSB = rxBuf[4];
     rpmMSB = rxBuf[5];
 
-    buf[0] = (rxBuf[2] + ((rxBuf[3] - 37) * 256));
+    buf[0] = (rxBuf[2] + ((rxBuf[3] - 37) * 256)); // load?
   }
   else if (rxId == 320)
   {
@@ -149,6 +149,7 @@ void loop()
 
     //buf[1] = (rxBuf[2] + (rxBuf[3] * 256)); // rpm target?
     
+    // this is a rpm but with some status which causes errors in the gauge.
     if (rxBuf[3] > 64)
     {
       buf[1] = (rxBuf[2] + ((rxBuf[3] - 64) * 256));
@@ -165,23 +166,16 @@ void loop()
     speed0 = rxBuf[0];
     speed1 = rxBuf[1];
 
-    buf[2] = rxBuf[4];
-    buf[3] = rxBuf[5];
-    buf[4] = rxBuf[6];
-    
-    if (rxBuf[7] > 128)
-    {
-      buf[5] = rxBuf[7] - 256;
-    }
-    else
-    {
-      buf[5] = rxBuf[7];
-    }
-    buf[5] = rxBuf[7];
+    buf[2] = rxBuf[4]; // ?
+    buf[3] = rxBuf[5]; // ?
+    buf[4] = rxBuf[6]; // ?
+
+    pitch = rxBuf[7];
+    roll = rxBuf[6];
   }
   else if (rxId == 864)
   {
-    buf[6] = rxBuf[4]; // load
+    buf[5] = rxBuf[4] * 0.39; // load 0-255 I think.
     
     oiltemp = rxBuf[2];
     coolenttemp = rxBuf[3];
@@ -190,11 +184,23 @@ void loop()
   }
   else if (rxId == 322)
   {
-    buf[7] = rxBuf[0] + (rxBuf[1] * 256);    
+    // has a status overtop some real data. Related to rpm
+    // idle is 9,860, touching gas is 10,000
+    if (rxBuf[1] >= 38 && rxBuf[1] < 166)
+    {
+      buf[6] = (rxBuf[0] + (rxBuf[1] * 256)) * 0.39;
+    }
+    else if (rxBuf[1] >= 166)
+    {
+      buf[6] = (rxBuf[0] + ((rxBuf[1] - 128) * 256)) * 0.39;
+    }
+    //buf[6] = (rxBuf[0] + (rxBuf[1] * 256)) / 256;
+    buf[7] = rxBuf[1]; 
+    
   }
   else if (rxId == 324)
   {
-    buf[8] = rxBuf[2]; // flow
+    buf[8] = rxBuf[2]; // rpm related, MSB, I think this is a timing but could be another sensor reading.
   }
   else if (rxId == 865)
   {

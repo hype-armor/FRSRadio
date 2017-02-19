@@ -42,6 +42,7 @@
         five = text[18];
         six = text[19];
         seven = text[20];
+        eight = text[21];
 
         threads--;
       }, "text").fail(function() {
@@ -59,23 +60,31 @@
 
         skip = 0;
         threads = 0;
+        valzero = document.getElementById('valzero');
+        valone = document.getElementById('valone');
+        valtwo = document.getElementById('valtwo');
+        valthree = document.getElementById('valthree');
+        valfour = document.getElementById('valfour');
+        valfive = document.getElementById('valfive');
+        valsix = document.getElementById('valsix');
+        valseven = document.getElementById('valseven');
         setInterval(function() {
           if (skip == 0 && threads <= 16) {
             threads++;
             loadtemp();
 
-            gauge.set(rpm); // set actual value
-            $('#valzero').text(rpm);
-            gauge1.set(fuelFlow); // set actual value
-            $('#valone').text(fuelFlow);
-            gauge2.set(oiltemp); // set actual value
-            $('#valtwo').text(oiltemp);
-            gauge3.set(coolenttemp); // set actual value
-            $('#valthree').text(coolenttemp);
-            gauge4.set(zero); // set actual value
-            $('#valfour').text(zero);
-            gauge5.set(one); // set actual value
-            $('#valfive').text(one);
+            gauge.set(oiltemp); // set actual value
+            valzero.textContent = oiltemp;
+            gauge1.set(zero); // set actual value
+            valone.textContent = zero;
+            gauge2.set(five); // set actual value
+            valtwo.textContent = five;
+            gauge3.set(six); // set actual value
+            valthree.textContent = six;
+            gauge4.set(seven); // set actual value
+            valfour.textContent = seven;
+            gauge5.set(eight); // set actual value
+            valfive.textContent = eight;
           } else if (skip > 0) {
             skip--;
           }
@@ -92,12 +101,12 @@
       });
 
       var opts = {
-        angle: 0.001, // The span of the gauge arc
+        angle: 0, // The span of the gauge arc
         lineWidth: 0.44, // The line thickness
         radiusScale: 1, // Relative radius
         pointer: {
           length: 0.13, // // Relative to gauge radius
-          strokeWidth: 0.035, // The thickness
+          strokeWidth: 0, // The thickness
           color: '#000000' // Fill color
         },
         limitMax: false, // If false, the max value of the gauge will be updated if value surpass max
@@ -110,44 +119,46 @@
       };
 
       animationSpeed = 1
+      maxValue = 1
       var target = document.getElementById('zero'); // your canvas element
       var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-      gauge.maxValue = 3000; // set max gauge value
+      gauge.maxValue = 150; // set max gauge value
       gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge.setTextField = document.getElementById('valzero'); // your canvas element
       gauge.set(1250); // set actual value
 
       var target1 = document.getElementById('one'); // your canvas element
       var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
-      gauge1.maxValue = 3000; // set max gauge value
+      gauge1.maxValue = maxValue; // set max gauge value
       gauge1.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge1.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge1.set(1250); // set actual value
 
       var target2 = document.getElementById('two'); // your canvas element
       var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
-      gauge2.maxValue = 3000; // set max gauge value
+      gauge2.maxValue = maxValue; // set max gauge value
       gauge2.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge2.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge2.set(1250); // set actual value
 
       var target3 = document.getElementById('three'); // your canvas element
       var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
-      gauge3.maxValue = 3000; // set max gauge value
+      gauge3.maxValue = maxValue; // set max gauge value
       gauge3.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge3.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge3.set(1250); // set actual value
 
       var target4 = document.getElementById('four'); // your canvas element
       var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
-      gauge4.maxValue = 3000; // set max gauge value
+      gauge4.maxValue = maxValue; // set max gauge value
       gauge4.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge4.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge4.set(1250); // set actual value
 
       var target5 = document.getElementById('five'); // your canvas element
       var gauge5 = new Gauge(target5).setOptions(opts); // create sexy gauge!
-      gauge5.maxValue = 3000; // set max gauge value
+      gauge5.maxValue = maxValue; // set max gauge value
       gauge5.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge5.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge5.set(1250); // set actual value
@@ -167,9 +178,9 @@
     
     <table id="content" style="width:480px">
       <tr>
-        <th>RPM</th>
-        <th>Fuel Flow</th>
         <th>Oil</th>
+        <th>zero</th>
+        <th>one</th>
       </tr>
       <tr>
         <td>
@@ -186,9 +197,9 @@
         </td>
       </tr>
       <tr>
-        <th>Coolent</th>
-        <th>zero</th>
-        <th>one</th>
+        <th>two</th>
+        <th>three</th>
+        <th>four</th>
       </tr>
       <tr>
         <td>
