@@ -17,36 +17,42 @@ void setup()
   }
 }
 
-signed int ticks = 0;
+unsigned int ticks;
+unsigned int updateinterval = 500;
+unsigned int validation;
 const int size = 9;
-double buf[size];
+unsigned int buf[size];
 unsigned char rxBuf[8];
 long unsigned int rxId;
-unsigned char len = 0;
+unsigned char len;
+bool hit[9] = {true,true,true,true,true,true,true,true,true};
 
-signed int rpm = 0;
-signed int rpmMSB = 0;
-signed int rpmLSB = 0;
-signed int pitch = 0;
-signed int roll = 0;
-signed int steeringAngle = 0;
-signed int steeringAngle0 = 0;
-signed int steeringAngle1 = 0;
-unsigned int accelerator = 0;
-unsigned int brake = 0;
-unsigned int fuelFlow = 0;
-unsigned int fuelFlow0 = 0;
-unsigned int fuelFlow1 = 0;
-unsigned int gear = 0;
-unsigned int sportMode = 0;
-unsigned int sportMode0 = 0;
-unsigned int sportMode1 = 0;
-double clutchStatus = 0.0;
-signed int mph = 0;
-signed int speed0 = 0;
-signed int speed1 = 0;
-unsigned int oiltemp = 0;
-unsigned int coolenttemp = 0;
+signed int rpm;
+signed int rpmMSB;
+signed int rpmLSB;
+signed int pitch;
+signed int roll;
+signed int steeringAngle;
+signed int steeringAngle0;
+signed int steeringAngle1;
+signed int slipAngle;
+signed int slipAngleLSB;
+signed int slipAngleMSB;
+unsigned int accelerator;
+unsigned int brake;
+unsigned int fuelFlow;
+unsigned int fuelFlow0;
+unsigned int fuelFlow1;
+unsigned int gear;
+unsigned int sportMode;
+unsigned int sportMode0;
+unsigned int sportMode1;
+unsigned int clutchStatus;
+signed int mph;
+signed int speed0;
+signed int speed1;
+unsigned int oiltemp;
+unsigned int coolenttemp;
 
 void loop()
 {
@@ -54,10 +60,12 @@ void loop()
   //rxId = CAN.getCanId();
 
   CAN.readMsgBufID(&rxId, &len, rxBuf);
+  
 
   // This prevents doing calculations every loop. 
-  // We still need to update incoming data because not all data will be captured in a single loop or even 100.
-  if (ticks == 1000)
+  // We still need to update incoming data because not all data will be hit in a single loop or even 100.
+
+  if (ticks == updateinterval)
   {
     ticks = 0;
     
@@ -74,14 +82,18 @@ void loop()
     // limit the data sent while off
     if (rpm <= 0 && accelerator == 0 && mph == 0)
     {
-      ticks = -20000; 
+      delay(1000);
+      updateinterval = 1000;
     }
     
     // sport mode math
     sportMode = sportMode0 + sportMode1;
     
     // steering angle math
-    steeringAngle = steeringAngle0 + (steeringAngle * 256);
+    steeringAngle = steeringAngle0 + (steeringAngle1 * 256);
+
+    // slip angle math
+    slipAngle = slipAngleLSB + (slipAngleMSB * 256);
     
     // gear math
     if (gear > 7)
@@ -91,12 +103,22 @@ void loop()
     }
     
     // mph math
-    mph = (speed0 + (speed1 * 256)) * 0.621371192; // m to k
+    // 26mph=700, 21mph=580, 18mph=500
+    mph = (speed0 + (speed1 * 256)) * 0.0359;// * 0.621371192; // m to k
 
     // fuel flow math
-    fuelFlow = fuelFlow0 + (fuelFlow1 * 256);
+    fuelFlow = fuelFlow0 + (fuelFlow1 * 256); // injector volume.
     
-    
+    // clutch math
+    if (clutchStatus > 100)
+    {
+      clutchStatus = 1;
+    }
+    else 
+    {
+      clutchStatus = 0;
+    }
+
     // print known data 
     Serial.print(rpm);Serial.print(",");
     Serial.print(accelerator);Serial.print(",");
@@ -111,9 +133,12 @@ void loop()
     Serial.print(sportMode);Serial.print(",");
     Serial.print(oiltemp);Serial.print(",");
     Serial.print(coolenttemp);Serial.print(",");
+    Serial.print(updateinterval);Serial.print(",");
+    Serial.print(slipAngle);Serial.print(",");
+    
     
     // print unknown data
-    for (int i =0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
       Serial.print(buf[i]);
       if (i != size - 1)
@@ -123,27 +148,57 @@ void loop()
     }
     Serial.println();
 
-    // start logging?
+    // turn on display if in sport mode.
     if (sportMode == 0)
     {
-      // set log flag
+      // set pin high.
     }
 
-    // send power to pi?
-    // if some trigger then send power to pi.
+    if (updateinterval > 1000)
+    {
+      updateinterval = 500;
+    }
+    else if (validation < 2)
+    {
+      updateinterval += 1;
+    }
+    else if (validation > 2)
+    {
+      updateinterval--;
+    }
+
+    validation = 0;
+    hit[0] = true;
+    hit[1] = true;
+    hit[2] = true;
+    hit[3] = true;
+    hit[4] = true;
+    hit[5] = true;
+    hit[6] = true;
+    hit[7] = true;
+    hit[8] = true;
   }
   
   ticks++;
 
-  if (rxId == 321)
+  if (hit[0] && rxId == 321)
   {
+    hit[0] = false;
     rpmLSB = rxBuf[4];
     rpmMSB = rxBuf[5];
 
-    buf[0] = (rxBuf[2] + ((rxBuf[3] - 37) * 256)); // load?
+    buf[0] = (rxBuf[2] + (rxBuf[3] * 256)) - 9800; // load?
+
+    buf[2] = (rxBuf[0] + (rxBuf[1] * 256) - 9800); // idles at 60 but when you touch the gas it jumps up 256.
+    buf[3] = rxBuf[1]; // lsb
+    buf[4] = rxBuf[4] + (rxBuf[5] * 256); // rpm when touching the gas pedal. Otherwise it is rpm + 33,000?
+    buf[5] = rxBuf[6]; // when clutch is out this shows gear. shows if in nutral. shows some sort of decel value while not in gear and rpms are dropping.
+    buf[6] = (rxBuf[2] + (rxBuf[3] * 256)) - 9800; // load?
+    buf[7] = rxBuf[7]; // nothing
   }
-  else if (rxId == 320)
+  else if (hit[1] && rxId == 320)
   {
+    hit[1] = false;
     accelerator = rxBuf[0];
     clutchStatus = rxBuf[1];
 
@@ -160,64 +215,81 @@ void loop()
     }
     //buf[1] = rxBuf[3];
   }
-  else if (rxId == 209)
+  else if (hit[2] && rxId == 209)
   {
-    brake = rxBuf[2];
+    hit[2] = false;
     speed0 = rxBuf[0];
     speed1 = rxBuf[1];
 
-    buf[2] = rxBuf[4]; // ?
-    buf[3] = rxBuf[5]; // ?
-    buf[4] = rxBuf[6]; // ?
+    brake = rxBuf[2];
 
     pitch = rxBuf[7];
     roll = rxBuf[6];
+
+
+
+    validation++;
   }
-  else if (rxId == 864)
+  else if (hit[3] && rxId == 864)
   {
-    buf[5] = rxBuf[4] * 0.39; // load 0-255 I think.
+    hit[3] = false;
+    //buf[5] = rxBuf[4]; // load 0-255 I think.
     
     oiltemp = rxBuf[2];
     coolenttemp = rxBuf[3];
     fuelFlow0 = rxBuf[0];
     fuelFlow1 = rxBuf[1];
-  }
-  else if (rxId == 322)
+  }/*
+  else if (hit[4] && rxId == 322)
   {
+    hit[4] = false;
     // has a status overtop some real data. Related to rpm
     // idle is 9,860, touching gas is 10,000
-    if (rxBuf[1] >= 38 && rxBuf[1] < 166)
+    // 3845 is 0
+    if (rxBuf[1] == 38)
     {
-      buf[6] = (rxBuf[0] + (rxBuf[1] * 256)) * 0.39;
+      buf[6] = rxBuf[0];
+    }
+    else if (rxBuf[1] < 166)
+    {
+      buf[6] = (rxBuf[0] + ((rxBuf[1] - 39) * 256));
     }
     else if (rxBuf[1] >= 166)
     {
-      buf[6] = (rxBuf[0] + ((rxBuf[1] - 128) * 256)) * 0.39;
+      buf[6] = (rxBuf[0] + ((rxBuf[1] - 166) * 256));
     }
-    //buf[6] = (rxBuf[0] + (rxBuf[1] * 256)) / 256;
-    buf[7] = rxBuf[1]; 
-    
-  }
-  else if (rxId == 324)
+    buf[7] = rxBuf[1];
+  }*/
+  else if (hit[5] && rxId == 324)
   {
+    hit[5] = false;
     buf[8] = rxBuf[2]; // rpm related, MSB, I think this is a timing but could be another sensor reading.
   }
-  else if (rxId == 865)
+  else if (hit[6] && rxId == 865)
   {
+    hit[6] = false;
     gear = rxBuf[0]; // gear
   }
-  else if (rxId == 208)
+  else if (hit[7] && rxId == 208)
   {
+    hit[7] = false;
     // steering angle
     steeringAngle0 = rxBuf[0];
     steeringAngle1 = rxBuf[1];
+
+    
   }
-  else if (rxId == 211)
+  else if (hit[8] && rxId == 211)
   {
+    hit[8] = false;
     // sport modes
     sportMode0 = rxBuf[0];
     sportMode1 = rxBuf[1];
-    
+  }
+  else if (rxId == 208)
+  {
+    slipAngleLSB = rxBuf[2];
+    slipAngleMSB = rxBuf[3];
   }
 }
 
