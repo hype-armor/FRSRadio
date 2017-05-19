@@ -20,32 +20,32 @@
 
         // known data points
         
-        rpm = text[i++];
-        accelerator = text[i++];
-        brake = text[i++];
-        clutchStatus = text[i++];
-        fuelFlow = text[i++];
-        gear = text[i++];
-        mph = text[i++];
-        steeringAngle = text[i++];
-        pitch = text[i++];
-        roll = text[i++];
-        sportMode = text[i++];
-        oiltemp = text[i++];
-        coolenttemp = text[i++];
-        updateinterval = text[i++];
-        slipAngle = text[i++];
+        rpm = parseInt(text[i++]) || 0;
+        accelerator = parseInt(text[i++]) || 0;
+        brake = parseInt(text[i++]) || 0;
+        clutchStatus = parseInt(text[i++]) || 0;
+        fuelFlow = parseInt(text[i++]) || 0;
+        gear = parseInt(text[i++]) || 0;
+        mph = parseInt(text[i++]) || 0;
+        steeringAngle = parseInt(text[i++]) || 0;
+        pitch = parseInt(text[i++]) || 0;
+        roll = parseInt(text[i++]) || 0;
+        sportMode = parseInt(text[i++]) || 0;
+        oiltemp = parseInt(text[i++]) || 0;
+        coolenttemp = parseInt(text[i++]) || 0;
+        updateinterval = parseInt(text[i++]) || 0;
+        slipAngle = parseInt(text[i++]) || 0;
         
         // unknowns
-        zero = text[i++]; // load?
-        one = text[i++]; // probably rpm.
-        two = text[i++];
-        three = text[i++];
-        four = text[i++];
-        five = text[i++];
-        six = text[i++];
-        seven = text[i++];
-        eight = text[i++];
+        zero = parseInt(text[i++]) || 0; // load?
+        one = parseInt(text[i++]) || 0; // probably rpm.
+        two = parseInt(text[i++]) || 0;
+        three = parseInt(text[i++]) || 0;
+        four = parseInt(text[i++]) || 0;
+        five = parseInt(text[i++]) || 0;
+        six = parseInt(text[i++]) || 0;
+        seven = parseInt(text[i++]) || 0;
+        eight = parseInt(text[i++]) || 0;
 
         threads--;
       }, "text").fail(function() {
