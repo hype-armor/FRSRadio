@@ -1,257 +1,256 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="js/gauge.min.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+<script src="js/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="js/gauge.min.js"></script>
 
-    <link href="css/std.css" rel="stylesheet">
-    <title></title>
+  <link href="css/std.css" rel="stylesheet">
+  <title></title>
 
-    <script type='text/javascript'>
-        function loadtemp() {
-            $.get('/data', function(data) {
-                text = data.split(",");
+  <script type='text/javascript'>
+    function loadtemp() {
+      $.get('/data', function(data) {
+        text = data.split(",");
 
-                i = 0;
+        i = 0;
 
-                // known data points
+        // known data points
+        
+        rpm = text[i++];
+        accelerator = text[i++];
+        brake = text[i++];
+        clutchStatus = text[i++];
+        fuelFlow = text[i++];
+        gear = text[i++];
+        mph = text[i++];
+        steeringAngle = text[i++];
+        pitch = text[i++];
+        roll = text[i++];
+        sportMode = text[i++];
+        oiltemp = text[i++];
+        coolenttemp = text[i++];
+        updateinterval = text[i++];
+        slipAngle = text[i++];
+        
+        // unknowns
+        zero = text[i++]; // load?
+        one = text[i++]; // probably rpm.
+        two = text[i++];
+        three = text[i++];
+        four = text[i++];
+        five = text[i++];
+        six = text[i++];
+        seven = text[i++];
+        eight = text[i++];
 
-                rpm = parseInt(text[i++]);
-                accelerator = parseInt(text[i++]);
-                brake = parseInt(text[i++]);
-                clutchStatus = parseInt(text[i++]);
-                fuelFlow = parseInt(text[i++]);
-                gear = parseInt(text[i++]);
-                mph = parseInt(text[i++]);
-                steeringAngle = parseInt(text[i++]);
-                pitch = parseInt(text[i++]);
-                roll = parseInt(text[i++]);
-                sportMode = parseInt(text[i++]);
-                oiltemp = parseInt(text[i++]);
-                coolenttemp = parseInt(text[i++]);
-                updateinterval = parseInt(text[i++]);
-                slipAngle = parseInt(text[i++]);
+        threads--;
+      }, "text").fail(function() {
+        skip = 20;
+        threads--;
+      });
+    };
 
-                // unknowns
-                zero = parseInt(text[i++]); // load?
-                one = parseInt(text[i++]); // probably rpm.
-                two = parseInt(text[i++]);
-                three = parseInt(text[i++]);
-                four = parseInt(text[i++]);
-                five = parseInt(text[i++]);
-                six = parseInt(text[i++]);
-                seven = parseInt(text[i++]);
-                eight = parseInt(text[i++]);
+    window.onload = function() {
+      $('#splashscreen').fadeOut(2000).promise().done(function() {
+        $('#content').hide();
+        $('#content').fadeIn(2000);
+        $('.labels').fadeIn(2000);
+        $('.values').fadeIn(2000);
 
-                threads--;
-            }, "text").fail(function() {
-                skip = 20;
-                threads--;
-            });
-        };
-
-        window.onload = function() {
-            $('#splashscreen').fadeOut(2000).promise().done(function() {
-                $('#content').hide();
-                $('#content').fadeIn(2000);
-                $('.labels').fadeIn(2000);
-                $('.values').fadeIn(2000);
-
-                skip = 0;
-                threads = 0;
-                valzero = document.getElementById('valzero');
-                valone = document.getElementById('valone');
-                valtwo = document.getElementById('valtwo');
-                valthree = document.getElementById('valthree');
-                valfour = document.getElementById('valfour');
-                valfive = document.getElementById('valfive');
-                valsix = document.getElementById('valsix');
-                valseven = document.getElementById('valseven');
-
-
-                zero = 0;
-                one = 0;
-                two = 0;
-                three = 0;
-                four = 0;
-                five = 0;
-                six = 0;
-                seven = 0;
-                eight = 0;
-                text = "";
-                setInterval(function() {
-                    if (skip == 0 && threads <= 4) {
-                        threads++;
-                        loadtemp();
-
-                        /*
-                        gauge.set(oiltemp);
-                        valzero.textContent = oiltemp;
-                        gauge1.set(two);
-                        valone.textContent = two;
-                        gauge2.set(three);
-                        valtwo.textContent = three;
-                        gauge3.set(four);
-                        valthree.textContent = four;
-                        gauge4.set(mph);
-                        valfour.textContent = mph;
-                        gauge5.set(eight);
-                        valfive.textContent = eight;
-                        */
-
-                        gauge.set(two);
-                        valzero.textContent = two;
-                        gauge1.set(mph);
-                        valone.textContent = mph;
-                        gauge2.set(four);
-                        valtwo.textContent = four;
-                        gauge3.set(five);
-                        valthree.textContent = five;
-                        gauge4.set(six);
-                        valfour.textContent = six;
-                        gauge5.set(seven);
-                        valfive.textContent = seven;
-
-                    } else if (skip > 0) {
-                        skip--;
-                    }
-                    $('#threads').text('Thread Count: ' + threads);
-                    $('#data').text(text);
-                }, 100);
-
-                $('#temperature').load('/temperature')
-                $('#loadavg').load('/loadavg')
-                setInterval(function() {
-                    $('#temperature').load('/temperature')
-                    $('#loadavg').load('/loadavg')
-                }, 10000);
-            });
-
-            var opts = {
-                angle: 0, // The span of the gauge arc
-                lineWidth: 0.44, // The line thickness
-                radiusScale: 1, // Relative radius
-                pointer: {
-                    length: 0.13, // // Relative to gauge radius
-                    strokeWidth: 0, // The thickness
-                    color: '#000000' // Fill color
-                },
-                limitMax: true, // If false, the max value of the gauge will be updated if value surpass max
-                limitMin: false, // If true, the min value of the gauge will be fixed unless you set it manually
-                colorStart: '#4286f4', // Colors
-                colorStop: '#4286f4', // just experiment with them
-                strokeColor: '#555555', // to see which ones work best for you
-                generateGradient: false,
-                highDpiSupport: false // High resolution support
-            };
-
-            animationSpeed = 1
-            maxValue = 255
-            var target = document.getElementById('zero'); // your canvas element
-            var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-            gauge.maxValue = 2500; // set max gauge value
-            gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge.setTextField = document.getElementById('valzero'); // your canvas element
-            gauge.set(0);
-
-            var target1 = document.getElementById('one'); // your canvas element
-            var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
-            gauge1.maxValue = maxValue; // set max gauge value
-            gauge1.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge1.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge1.set(0);
-
-            var target2 = document.getElementById('two'); // your canvas element
-            var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
-            gauge2.maxValue = 7500; // set max gauge value
-            gauge2.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge2.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge2.set(0);
-
-            var target3 = document.getElementById('three'); // your canvas element
-            var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
-            gauge3.maxValue = maxValue; // set max gauge value
-            gauge3.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge3.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge3.set(0);
-
-            var target4 = document.getElementById('four'); // your canvas element
-            var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
-            gauge4.maxValue = 2500; // set max gauge value
-            gauge4.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge4.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge4.set(0);
-
-            var target5 = document.getElementById('five'); // your canvas element
-            var gauge5 = new Gauge(target5).setOptions(opts); // create sexy gauge!
-            gauge5.maxValue = 16; // set max gauge value
-            gauge5.setMinValue(0); // Prefer setter over gauge.minValue = 0
-            gauge5.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-            gauge5.set(0);
-        }
-    </script>
+        skip = 0;
+        threads = 0;
+        valzero = document.getElementById('valzero');
+        valone = document.getElementById('valone');
+        valtwo = document.getElementById('valtwo');
+        valthree = document.getElementById('valthree');
+        valfour = document.getElementById('valfour');
+        valfive = document.getElementById('valfive');
+        valsix = document.getElementById('valsix');
+        valseven = document.getElementById('valseven');
 
 
-</head>
+        zero = 0;
+        one = 0;
+        two = 0;
+        three = 0;
+        four = 0;
+        five = 0;
+        six = 0;
+        seven = 0;
+        eight = 0;
+        text = "";
+        setInterval(function() {
+          if (skip == 0 && threads <= 4) {
+            threads++;
+            loadtemp();
 
-<body>
-    <div id="spacer">
-        <div id="threads">Starting up....</div>
-    </div>
+            /*
+            gauge.set(oiltemp);
+            valzero.textContent = oiltemp;
+            gauge1.set(two);
+            valone.textContent = two;
+            gauge2.set(three);
+            valtwo.textContent = three;
+            gauge3.set(four);
+            valthree.textContent = four;
+            gauge4.set(mph);
+            valfour.textContent = mph;
+            gauge5.set(eight);
+            valfive.textContent = eight;
+            */
+            
+            gauge.set(two);
+            valzero.textContent = two;
+            gauge1.set(mph);
+            valone.textContent = mph;
+            gauge2.set(four);
+            valtwo.textContent = four;
+            gauge3.set(five);
+            valthree.textContent = five;
+            gauge4.set(six);
+            valfour.textContent = six;
+            gauge5.set(seven);
+            valfive.textContent = seven;
+            
+          } else if (skip > 0) {
+            skip--;
+          }
+          $('#threads').text('Thread Count: ' + threads);
+          $('#data').text(text);
+        }, 100);
+
+        $('#temperature').load('/temperature')
+        $('#loadavg').load('/loadavg')
+        setInterval(function() {
+          $('#temperature').load('/temperature')
+          $('#loadavg').load('/loadavg')
+        }, 10000);
+      });
+
+      var opts = {
+        angle: 0, // The span of the gauge arc
+        lineWidth: 0.44, // The line thickness
+        radiusScale: 1, // Relative radius
+        pointer: {
+          length: 0.13, // // Relative to gauge radius
+          strokeWidth: 0, // The thickness
+          color: '#000000' // Fill color
+        },
+        limitMax: true, // If false, the max value of the gauge will be updated if value surpass max
+        limitMin: false, // If true, the min value of the gauge will be fixed unless you set it manually
+        colorStart: '#4286f4', // Colors
+        colorStop: '#4286f4', // just experiment with them
+        strokeColor: '#555555', // to see which ones work best for you
+        generateGradient: false,
+        highDpiSupport: false // High resolution support
+      };
+
+      animationSpeed = 1
+      maxValue = 255
+      var target = document.getElementById('zero'); // your canvas element
+      var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+      gauge.maxValue = 2500; // set max gauge value
+      gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge.setTextField = document.getElementById('valzero'); // your canvas element
+      gauge.set(0);
+
+      var target1 = document.getElementById('one'); // your canvas element
+      var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
+      gauge1.maxValue = maxValue; // set max gauge value
+      gauge1.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge1.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge1.set(0);
+
+      var target2 = document.getElementById('two'); // your canvas element
+      var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
+      gauge2.maxValue = 7500; // set max gauge value
+      gauge2.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge2.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge2.set(0);
+
+      var target3 = document.getElementById('three'); // your canvas element
+      var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
+      gauge3.maxValue = maxValue; // set max gauge value
+      gauge3.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge3.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge3.set(0);
+
+      var target4 = document.getElementById('four'); // your canvas element
+      var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
+      gauge4.maxValue = 2500; // set max gauge value
+      gauge4.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge4.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge4.set(0);
+
+      var target5 = document.getElementById('five'); // your canvas element
+      var gauge5 = new Gauge(target5).setOptions(opts); // create sexy gauge!
+      gauge5.maxValue = 16; // set max gauge value
+      gauge5.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge5.animationSpeed = animationSpeed; // set animation speed (32 is default value)
+      gauge5.set(0);
+    }
+
+  </script>
+
+    
+  </head>
+
+  <body>
+    <div id="spacer"><div id="threads">Starting up....</div></div>
     <div id="splashscreen" style="height: 480px;">
-        <div id="spacer"></div>
-        <img src="img/frs.png" />
+      <div id="spacer"></div>
+      <img src="img/frs.png" />
     </div>
-
+    
     <table id="content" style="width:480px">
-        <tr>
-            <th>Oil</th>
-            <th>one</th>
-            <th>two</th>
-        </tr>
-        <tr>
-            <td>
-                <canvas id="zero" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valzero"></div>
-            </td>
-            <td>
-                <canvas id="one" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valone"></div>
-            </td>
-            <td>
-                <canvas id="two" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valtwo"></div>
-            </td>
-        </tr>
-        <tr>
-            <th>three</th>
-            <th>four</th>
-            <th>five</th>
-        </tr>
-        <tr>
-            <td>
-                <canvas id="three" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valthree"></div>
-            </td>
-            <td>
-                <canvas id="four" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valfour"></div>
-            </td>
-            <td>
-                <canvas id="five" style="border:1px solid #000000;"></canvas>
-                <div class="values" id="valfive"></div>
-            </td>
-        </tr>
+      <tr>
+        <th>Oil</th>
+        <th>one</th>
+        <th>two</th>
+      </tr>
+      <tr>
+        <td>
+          <canvas id="zero" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valzero"></div>
+        </td>
+        <td>
+          <canvas id="one" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valone"></div>
+        </td>
+        <td>
+          <canvas id="two" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valtwo"></div>
+        </td>
+      </tr>
+      <tr>
+        <th>three</th>
+        <th>four</th>
+        <th>five</th>
+      </tr>
+      <tr>
+        <td>
+          <canvas id="three" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valthree"></div>
+        </td>
+        <td>
+          <canvas id="four" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valfour"></div>
+        </td>
+        <td>
+          <canvas id="five" style="border:1px solid #000000;"></canvas>
+          <div class="values" id="valfive"></div>
+        </td>
+      </tr>
     </table>
 
     <div id="data">Debug data will load here.</div>
     <div id="temperature">41°C</div>
     <div id="loadavg">CPU: 100%</div>
-</body>
-
+  </body>
 </html>
+
