@@ -44,8 +44,6 @@
         four = text[i++];
         five = text[i++];
         six = text[i++];
-        seven = text[i++];
-        eight = text[i++];
 
         threads--;
       }, "text").fail(function() {
@@ -68,9 +66,7 @@
         valtwo = document.getElementById('valtwo');
         valthree = document.getElementById('valthree');
         valfour = document.getElementById('valfour');
-        valfive = document.getElementById('valfive');
-        valsix = document.getElementById('valsix');
-        valseven = document.getElementById('valseven');
+        //valfive = document.getElementById('valfive');
 
 
         zero = 0;
@@ -80,41 +76,63 @@
         four = 0;
         five = 0;
         six = 0;
-        seven = 0;
-        eight = 0;
+        rpm = 0;
+        accelerator = 0;
+        brake = 0;
+        clutchStatus = 0;
+        fuelFlow = 0;
+        gear = 0;
+        mph = 0;
+        steeringAngle = 0;
+        pitch = 0;
+        roll = 0;
+        sportMode = 0;
+        oiltemp = 0;
+        coolenttemp = 0;
+        updateinterval = 0;
+        slipAngle = 0;
         text = "";
+
+        var gsensor = document.getElementById("five");
+        var ctx = gsensor.getContext("2d");
+        
+        var lastStroke = [0,0];
+        var xoff = 150;
+        var yoff = 75;
+        var xmul = 1.08;
+        var ymul = 0.5;
+
         setInterval(function() {
           if (skip == 0 && threads <= 4) {
             threads++;
             loadtemp();
 
-            /*
+            
             gauge.set(oiltemp);
             valzero.textContent = oiltemp;
-            gauge1.set(two);
-            valone.textContent = two;
-            gauge2.set(three);
-            valtwo.textContent = three;
-            gauge3.set(four);
-            valthree.textContent = four;
-            gauge4.set(mph);
-            valfour.textContent = mph;
-            gauge5.set(eight);
-            valfive.textContent = eight;
-            */
+
             
-            gauge.set(two);
-            valzero.textContent = two;
+            ctx.beginPath();
+            var x = (roll * xmul * 100) + xoff
+            var y = (pitch * ymul * 100) + yoff
+            ctx.arc(x, y, 10, 0, 2 * Math.PI);
+            ctx.clearRect(lastStroke[0], lastStroke[1], gsensor.width, gsensor.height);
+            ctx.fillStyle = "#4286f4"; //blue
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+
+            /* gauge.set(two);
+            valzero.textContent = two; */
             gauge1.set(mph);
             valone.textContent = mph;
-            gauge2.set(four);
-            valtwo.textContent = four;
-            gauge3.set(five);
-            valthree.textContent = five;
-            gauge4.set(six);
-            valfour.textContent = six;
-            gauge5.set(seven);
-            valfive.textContent = seven;
+            gauge2.set(coolenttemp);
+            valtwo.textContent = coolenttemp;
+            gauge3.set(slipAngle);
+            valthree.textContent = slipAngle;
+            gauge4.set(fuelFlow);
+            valfour.textContent = fuelFlow;
+            
             
           } else if (skip > 0) {
             skip--;
@@ -153,7 +171,7 @@
       maxValue = 255
       var target = document.getElementById('zero'); // your canvas element
       var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-      gauge.maxValue = 2500; // set max gauge value
+      gauge.maxValue = 255; // set max gauge value
       gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge.setTextField = document.getElementById('valzero'); // your canvas element
@@ -168,31 +186,31 @@
 
       var target2 = document.getElementById('two'); // your canvas element
       var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
-      gauge2.maxValue = 7500; // set max gauge value
+      gauge2.maxValue = 255; // set max gauge value
       gauge2.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge2.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge2.set(0);
 
       var target3 = document.getElementById('three'); // your canvas element
       var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
-      gauge3.maxValue = maxValue; // set max gauge value
-      gauge3.setMinValue(0); // Prefer setter over gauge.minValue = 0
+      gauge3.maxValue = 128; // set max gauge value
+      gauge3.setMinValue(-128); // Prefer setter over gauge.minValue = 0
       gauge3.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge3.set(0);
 
       var target4 = document.getElementById('four'); // your canvas element
       var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
-      gauge4.maxValue = 2500; // set max gauge value
+      gauge4.maxValue = 100; // set max gauge value
       gauge4.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge4.animationSpeed = animationSpeed; // set animation speed (32 is default value)
       gauge4.set(0);
 
-      var target5 = document.getElementById('five'); // your canvas element
+      /* var target5 = document.getElementById('five'); // your canvas element
       var gauge5 = new Gauge(target5).setOptions(opts); // create sexy gauge!
       gauge5.maxValue = 16; // set max gauge value
       gauge5.setMinValue(0); // Prefer setter over gauge.minValue = 0
       gauge5.animationSpeed = animationSpeed; // set animation speed (32 is default value)
-      gauge5.set(0);
+      gauge5.set(0); */
     }
 
   </script>
@@ -210,8 +228,8 @@
     <table id="content" style="width:480px">
       <tr>
         <th>Oil</th>
-        <th>one</th>
-        <th>two</th>
+        <th>Speed</th>
+        <th>Coolent</th>
       </tr>
       <tr>
         <td>
@@ -228,9 +246,9 @@
         </td>
       </tr>
       <tr>
-        <th>three</th>
-        <th>four</th>
-        <th>five</th>
+        <th>Slip Angle</th>
+        <th>Fuel Flow</th>
+        <th>g</th>
       </tr>
       <tr>
         <td>
@@ -242,8 +260,8 @@
           <div class="values" id="valfour"></div>
         </td>
         <td>
-          <canvas id="five" style="border:1px solid #000000;"></canvas>
-          <div class="values" id="valfive"></div>
+          <canvas id="five" style="border:1px solid #ffffff;"></canvas>
+          <div class="values" id="valfive" style="color:#00000000;">.</div>
         </td>
       </tr>
     </table>
