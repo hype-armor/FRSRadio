@@ -55,10 +55,13 @@ sudo rm /var/lib/dhcp/*
 
 
 ### webserver setup
-cp frswebserver.sh to /etc/init.d/frswebserver.sh
-chmod 755 /etc/init.d/frswebserver.sh
-chmod +x frswebserver.sh
-sudo systemctl daemon-reload
+cp frswebserver.sh to /etc/systemd/system/frswebserver.service
+chmod 755 /etc/systemd/system/frswebserver.service
+chmod +x frswebserver.service
+systemctl link /etc/systemd/system/frswebserver.service
+systemctl daemon-reload
+systemctl enable frswebserver.service
+
 cp webserver.py /home/pi/frsproject/webserver.py
 chmod +x webserver.py
 
