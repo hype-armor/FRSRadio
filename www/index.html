@@ -66,7 +66,7 @@
         valtwo = document.getElementById('valtwo');
         valthree = document.getElementById('valthree');
         valfour = document.getElementById('valfour');
-        //valfive = document.getElementById('valfive');
+        valfive = document.getElementById('valfive');
 
 
         zero = 0;
@@ -113,8 +113,8 @@
 
             
             ctx.beginPath();
-            var x = (roll * xmul * 100) + xoff
-            var y = (pitch * ymul * 100) + yoff
+            var x = (roll * xmul) + xoff
+            var y = (pitch * ymul) + yoff
             ctx.arc(x, y, 10, 0, 2 * Math.PI);
             ctx.clearRect(lastStroke[0], lastStroke[1], gsensor.width, gsensor.height);
             ctx.fillStyle = "#4286f4"; //blue
@@ -132,6 +132,8 @@
             valthree.textContent = slipAngle;
             gauge4.set(fuelFlow);
             valfour.textContent = fuelFlow;
+
+            valfive.textContent = "" + roll + "," + pitch + "";
             
             
           } else if (skip > 0) {
@@ -261,7 +263,7 @@
         </td>
         <td>
           <canvas id="five" style="border:1px solid #ffffff;"></canvas>
-          <div class="values" id="valfive" style="color:#00000000;">.</div>
+          <div class="values" id="valfive"></div>
         </td>
       </tr>
     </table>
